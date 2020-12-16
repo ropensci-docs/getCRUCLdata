@@ -1,0 +1,12 @@
+{
+  "commit": {
+    "commit": "ab866ade0f7621be66a675be24779053590a9b79",
+    "author": "Adam Sparks <adamhsparks@gmail.com>",
+    "time": "2020-12-16 04:24:19",
+    "files": 1,
+    "merge": false,
+    "message": "Remove footer from README\n\n"
+  },
+  "remote": "https://github.com/ropensci/getCRUCLdata",
+  "pkg": "getCRUCLdata"
+}
