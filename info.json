@@ -1,0 +1,12 @@
+{
+  "commit": {
+    "commit": "c762b1e32117470a8db5296e07a93fa68889b9f7",
+    "author": "Adam H. Sparks <adam.sparks@curtin.edu.au>",
+    "time": "2024-02-12 06:39:56",
+    "files": 2,
+    "merge": false,
+    "message": "Update ROxygen note and COC statement in README\n"
+  },
+  "repo": "https://github.com/ropensci/getCRUCLdata",
+  "pkg": "getCRUCLdata"
+}

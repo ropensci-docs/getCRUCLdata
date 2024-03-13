@@ -1,0 +1,11 @@
+pandoc: 2.16.2
+pkgdown: 2.0.7
+pkgdown_sha: ~
+articles:
+  Advanced_use: Advanced_use.html
+  getCRUCLdata: getCRUCLdata.html
+last_built: 2024-03-13T06:56Z
+urls:
+  reference: https://docs.ropensci.org/getCRUCLdata/reference
+  article: https://docs.ropensci.org/getCRUCLdata/articles
+
