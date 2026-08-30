@@ -1,0 +1,217 @@
+# getCRUCLdata
+
+### Introduction to {getCRUCLdata}
+
+The {getCRUCLdata} package provides functions that automate importing
+CRU CL v. 2.0 climatology data into R, facilitate the calculation of
+minimum temperature and maximum temperature, and formats the data into a
+\[data.table::data.table\] object or a \[terra:SpatRaster\].
+
+CRU CL v. 2.0 data are a gridded climatology of 1961-1990 monthly means
+released in 2002 and cover all land areas (excluding Antarctica) at 10
+arcminutes (0.1666667 arc degree) resolution. For more information see
+the description of the data provided by the University of East Anglia
+Climate Research Unit (CRU),
+<https://crudata.uea.ac.uk/cru/data/hrg/tmc/readme.txt>.
+
+### Changes to original CRU CL v. 2.0 data
+
+This package automatically converts elevation values from kilometres to
+metres.
+
+This package crops all spatial outputs to an extent of ymin = -60, ymax
+= 85, xmin = -180, xmax = 180. Note that the original wind data include
+land area for parts of Antarctica, and so these are omitted. There are
+also some elevation values around the Dead Sea area that do not have
+corresponding climate values and so these are removed. What is left is a
+complete suite of data for climate and elevation data in all grid cells
+that are provided, but not *all* the data that are in the original
+datasets.
+
+## Using {getCRUCLdata}
+
+Logical arguments are used to specify the climatology elements to
+retrieve and parse. All data arguments default to `FALSE`. The arguments
+for selecting the climatology elements for importing are:
+
+- **pre** Logical. Read precipitation (millimetres/month) from server
+  and return in the data?
+
+- **pre_cv** Logical. Read cv of precipitation (percent) from server and
+  return in the data?
+
+- **rd0** Logical. Read wet-days (number days with \>0.1 millimetres
+  rain per month) and return in the data?
+
+- **dtr** Logical. Read mean diurnal temperature range (degrees Celsius)
+  and return it in the data?
+
+- **tmp** Logical. Read temperature (degrees Celsius) and return it in
+  the data?
+
+- **tmn** Logical. Calculate minimum temperature values (degrees
+  Celsius) and return it in the data?
+
+- **tmx** Logical. Calculate maximum temperature (degrees Celsius) and
+  return it in the data?
+
+- **reh** Logical. Read relative humidity and return it in the data?
+
+- **sunp** Logical. Read sunshine, percent of maximum possible (percent
+  of day length) and return it in data?
+
+- **frs** Logical. Read ground-frost records (number of days with
+  ground-frost per month) and return it in data?
+
+- **wnd** Logical. Read 10m wind speed (metres/second) and return it in
+  the data?
+
+- **elv** Logical. Read elevation (and convert to metres from
+  kilometres) and return it in the data?
+
+- **x** String. Local file path where CRU CL v. 2.0 .dat.gz files are
+  located.
+
+#### Creating data frames for use in R
+
+The
+[`read_cru_dt()`](https://docs.ropensci.org/getCRUCLdata/reference/read_cru_dt.md)
+function automates the download process and creates data.tables of the
+climatology elements.
+
+``` r
+
+library(getCRUCLdata)
+#> 
+#> Attaching package: 'getCRUCLdata'
+#> The following object is masked _by_ '.GlobalEnv':
+#> 
+#>     read_cru_dt
+
+CRU_data <- read_cru_dt(
+  pre = TRUE,
+  pre_cv = TRUE,
+  rd0 = TRUE,
+  tmp = TRUE,
+  dtr = TRUE,
+  reh = TRUE,
+  tmn = TRUE,
+  tmx = TRUE,
+  sunp = TRUE,
+  frs = TRUE,
+  wnd = TRUE,
+  elv = TRUE
+)
+#> Error in `.validate_filter_files()`:
+#> ! could not find function ".validate_filter_files"
+
+CRU_data
+#> Error:
+#> ! object 'CRU_data' not found
+```
+
+Perhaps you only need one or two elements, it is easy to create a
+data.table of mean temperature only.
+
+``` r
+
+t <- read_cru_dt(tmp = TRUE)
+#> Error in `.validate_filter_files()`:
+#> ! could not find function ".validate_filter_files"
+
+t
+#> function (x) 
+#> UseMethod("t")
+#> <bytecode: 0x75f380708>
+#> <environment: namespace:base>
+```
+
+#### Creating terra SpatRaster objects
+
+For working with spatial data, {getCRUCLdata} provides a function that
+create a \[terra::SpatRaster\] object of the data.
+
+The
+[`read_cru_rast()`](https://docs.ropensci.org/getCRUCLdata/reference/read_cru_rast.md)
+functions provide similar functionality to
+[`read_cru_dt()`](https://docs.ropensci.org/getCRUCLdata/reference/read_cru_dt.md),
+but rather than returning a data frame, it returns a
+[`terra::SpatRaster()`](https://rspatial.github.io/terra/reference/SpatRaster-class.html)
+object with n layers for use in an R session. Illustrated here is
+creating a
+[`terra::SpatRaster()`](https://rspatial.github.io/terra/reference/SpatRaster-class.html)
+of all CRU CL v. 2.0 climatology elements available.
+
+``` r
+
+CRU_rast <- read_cru_rast(
+  pre = TRUE,
+  pre_cv = TRUE,
+  rd0 = TRUE,
+  tmp = TRUE,
+  dtr = TRUE,
+  reh = TRUE,
+  tmn = TRUE,
+  tmx = TRUE,
+  sunp = TRUE,
+  frs = TRUE,
+  wnd = TRUE,
+  elv = TRUE
+)
+
+CRU_rast
+#> class       : SpatRaster
+#> size        : 870, 2160, 133  (nrow, ncol, nlyr)
+#> resolution  : 0.1666667, 0.1666667  (x, y)
+#> extent      : -180, 180, -60, 85  (xmin, xmax, ymin, ymax)
+#> coord. ref. : lon/lat WGS 84 (CRS84) (OGC:CRS84)
+#> source(s)   : memory
+#> names       : pre_1, pre_2, pre_3, pre_4, pre_5,  pre_6, ...
+#> min values  :     0,     0,     0,     0,     0,      0, ...
+#> max values  : 910.1, 824.3, 727.3, 741.3,  1100, 2512.6, ...
+```
+
+### Reading files downloaded outside R
+
+Both
+[`read_cru_dt()`](https://docs.ropensci.org/getCRUCLdata/reference/read_cru_dt.md)
+and `read_cru_rast` provide capability for users that may have
+connectivity issues or simply wish to use something other than R to
+download the data files. You may supply the location of the files on the
+local disk, `x`, that you wish to import.
+
+``` r
+
+t <- create_CRU_df(tmp = TRUE, x = "~/Downloads")
+```
+
+## CRU CL v. 2.0 reference and abstract
+
+Mark New (1,\*), David Lister (2), Mike Hulme (3), Ian Makin (4) A
+high-resolution data set of surface climate over global land areas
+Climate Research, 2000, Vol 21, pg 1-25 (1) School of Geography and the
+Environment, University of Oxford, Mansfield Road, Oxford OX1 3TB,
+United Kingdom (2) Climatic Research Unit, and (3) Tyndall Centre for
+Climate Change Research, both at School of Environmental Sciences,
+University of East Anglia, Norwich NR4 7TJ, United Kingdom (4)
+International Water Management Institute, PO Box 2075, Colombo, Sri
+Lanka
+
+**ABSTRACT:** We describe the construction of a 10-minute
+latitude/longitude data set of mean monthly surface climate over global
+land areas, excluding Antarctica. The climatology includes 8 climate
+elements - precipitation, wet-day frequency, temperature, diurnal
+temperature range, relative humidity, sunshine duration, ground frost
+frequency and windspeed - and was interpolated from a data set of
+station means for the period centred on 1961 to 1990. Precipitation was
+first defined in terms of the parameters of the Gamma distribution,
+enabling the calculation of monthly precipitation at any given return
+period. The data are compared to an earlier data set at 0.5 degrees
+latitude/longitude resolution and show added value over most regions.
+The data will have many applications in applied climatology,
+biogeochemical modelling, hydrology and agricultural meteorology and are
+available through the School of Geography Oxford
+(<https://www.geog.ox.ac.uk>), the International Water Management
+Institute “World Water and Climate Atlas” (<https://www.iwmi.org/>) and
+the Climatic Research Unit
+(<https://www.uea.ac.uk/groups-and-centres/climatic-research-unit>).

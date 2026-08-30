@@ -1,0 +1,13 @@
+{
+  "commit": {
+    "commit": "bf3787580a66293b881f2caf59675c4758696daa",
+    "author": "Adam H. Sparks <adamhsparks@icloud.com>",
+    "time": "2026-05-20T10:24:29Z",
+    "files": 1,
+    "merge": false,
+    "message": "chore: update codemeta.json\n"
+  },
+  "repo": "https://github.com/ropensci/getCRUCLdata",
+  "pkg": "getCRUCLdata",
+  "time": "2026-08-30T07:46:02Z"
+}
